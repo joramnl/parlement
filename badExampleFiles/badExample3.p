@@ -1,0 +1,5 @@
+string myString = "Hello World!"
+
+MARK RUTTE WIL JE DIT "Nope" KEER HERHALEN
+    WILLIE WIL JE DIT OPLEZEN ALSJEBLIEFT myString
+OKE STOP MAAR

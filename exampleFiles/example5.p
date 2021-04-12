@@ -1,0 +1,9 @@
+MARK RUTTE WIL JE DIT 5 KEER HERHALEN
+    printStuff()
+OKE STOP MAAR
+
+MOTIE printStuff ()
+    int counter = 0
+
+    WILLIE WIL JE DIT OPLEZEN ALSJEBLIEFT counter + 1
+OKE STOP MAAR
