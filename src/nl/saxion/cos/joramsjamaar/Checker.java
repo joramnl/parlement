@@ -50,8 +50,22 @@ public class Checker extends ParlementBaseVisitor<DataType>
             );
         }
 
+
         if (ctx.val != null)
         {
+            DataType d = visit(ctx.val);
+
+            if (!d.equals(s.getType())) {
+                throw new CompilerException(
+                    String.format(
+                        "Line %d:%d: Trying to assign different datatype to variable '%s'.",
+                        ctx.getStart().getLine(),
+                        ctx.getStart().getCharPositionInLine(),
+                        identifier
+                    )
+                );
+            }
+
             s.setUsed(true);
         }
 
@@ -91,6 +105,38 @@ public class Checker extends ParlementBaseVisitor<DataType>
         return s.getType();
     }
 
+    @Override
+    public DataType visitAssigment(ParlementParser.AssigmentContext ctx)
+    {
+        String identifier = ctx.IDENTIFIER().getText();
+        Symbol s = symbols.get(identifier);
+
+        if (s == null) {
+            throw new CompilerException(
+                String.format(
+                    "Line %d:%d: Variable '%s' is not declared",
+                    ctx.getStart().getLine(),
+                    ctx.getStart().getCharPositionInLine(),
+                    identifier
+                )
+            );
+        }
+
+        DataType d = visit(ctx.expression());
+
+        if (!d.equals(s.getType())) {
+            throw new CompilerException(
+                String.format(
+                    "Line %d:%d: Trying to assign different datatype to variable '%s'.",
+                    ctx.getStart().getLine(),
+                    ctx.getStart().getCharPositionInLine(),
+                    identifier
+                )
+            );
+        }
+
+        return super.visitAssigment(ctx);
+    }
 
     @Override
     public DataType visitIdentifiers(ParlementParser.IdentifiersContext ctx)
