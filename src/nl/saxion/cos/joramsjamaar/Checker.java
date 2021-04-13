@@ -266,6 +266,12 @@ public class Checker extends ParlementBaseVisitor<DataType>
     }
 
     @Override
+    public DataType visitExParentheses(ParlementParser.ExParenthesesContext ctx)
+    {
+        return visit(ctx.expression());
+    }
+
+    @Override
     public DataType visitExAddOp(ParlementParser.ExAddOpContext ctx)
     {
         DataType left = visit(ctx.left);

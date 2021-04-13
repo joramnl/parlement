@@ -171,29 +171,11 @@ public interface ParlementVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFunction(ParlementParser.FunctionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ParlementParser#identifiers}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitIdentifiers(ParlementParser.IdentifiersContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link ParlementParser#functionIdentifier}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunctionIdentifier(ParlementParser.FunctionIdentifierContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link ParlementParser#invokeFunction}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitInvokeFunction(ParlementParser.InvokeFunctionContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link ParlementParser#arguments}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArguments(ParlementParser.ArgumentsContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ParlementParser#declaration}.
 	 * @param ctx the parse tree

@@ -130,8 +130,8 @@ class Examples
             s.runClass(aClass);
             List<String> output = s.getOutput();
 
-            for (String wafa : output)
-                System.out.println(wafa);
+            for (String out : output)
+                System.out.println(out);
 
             assertArrayEquals(new String[]{
                 "1",
@@ -161,8 +161,8 @@ class Examples
             s.runClass(aClass);
             List<String> output = s.getOutput();
 
-            for (String wafa : output)
-                System.out.println(wafa);
+            for (String out : output)
+                System.out.println(out);
 
             assertArrayEquals(new String[]{
                     "1",

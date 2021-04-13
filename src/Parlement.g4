@@ -13,7 +13,9 @@ statement
     | invokeFunction
     ;
 
-assigment: IDENTIFIER ASSIGN expression;
+assigment
+    : IDENTIFIER ASSIGN expression
+    ;
 
 expression
     : '(' expression ')'                                    # ExParentheses     // Parentheses
@@ -34,70 +36,73 @@ expression
     | BOOLEAN                                               # ExBoolLiteral
     ;
 
-printStmt: 'WILLIE WIL JE DIT OPLEZEN ALSJEBLIEFT' expression;
+printStmt
+    : 'WILLIE WIL JE DIT OPLEZEN ALSJEBLIEFT' expression
+    ;
 
-ifStmt: 'ALS' expression 'DAN' ifTrue=ifBlock ('ANDERS' ifFalse=ifBlock)?;
+ifStmt
+    : 'ALS' expression 'DAN' ifTrue=ifBlock ('ANDERS' ifFalse=ifBlock)?
+    ;
 
-ifBlock: statement | LEFT_CURLYBRACKET statement* RIGHT_CURLYBRACKET;
+ifBlock
+    : statement
+    | LEFT_CURLYBRACKET statement* RIGHT_CURLYBRACKET
+    ;
 
-loop: 'MARK RUTTE WIL JE DIT' times=expression 'KEER HERHALEN' content=statement* 'OKE STOP MAAR';
+loop
+    : 'MARK RUTTE WIL JE DIT' times=expression 'KEER HERHALEN' content=statement* 'OKE STOP MAAR'
+    ;
 
-function: 'MOTIE' IDENTIFIER LEFT_PARENTHESES identifiers? RIGHT_PARENTHESES statement* 'OKE STOP MAAR';
+function
+    : 'MOTIE' IDENTIFIER statement* 'OKE STOP MAAR'
+    ;
 
-identifiers
- :  functionIdentifier ( ',' functionIdentifier )*
- ;
+invokeFunction
+    : name=IDENTIFIER LEFT_PARENTHESES RIGHT_PARENTHESES
+    ;
 
-functionIdentifier
- : type=( T_INT | T_STRING | T_BOOLEAN ) IDENTIFIER
- ;
-
-
-invokeFunction: name=IDENTIFIER LEFT_PARENTHESES arguments? RIGHT_PARENTHESES;
-
-arguments
- : expression ( ',' expression )*
- ;
-
-declaration: type=( T_INT | T_STRING | T_BOOLEAN ) IDENTIFIER (ASSIGN val=expression)?;
+declaration
+    : type=( T_INT | T_STRING | T_BOOLEAN ) IDENTIFIER (ASSIGN val=expression)?
+    ;
 
 // Datatypen
-T_INT:          'int';
-T_STRING:       'string';
-T_BOOLEAN:      'bool';
+T_INT:                  'int';
+T_STRING:               'string';
+T_BOOLEAN:              'bool';
 
 LEFT_PARENTHESES:       '(';
 RIGHT_PARENTHESES:      ')';
 LEFT_CURLYBRACKET:      '{';
 RIGHT_CURLYBRACKET:     '}';
 
-INT:            '0'
-   |            [1-9][0-9]*
+INT:                    '0'
+   |                    [1-9][0-9]*
    ;
 
 BOOLEAN
-    :           'true'
-    |           'false'
-    |           [0-1]
+    :                   'true'
+    |                   'false'
+    |                   [0-1]
     ;
 
-STRING:         '"' ~('\n'|'\r')* '"';
+STRING:                 '"' ~('\n'|'\r')* '"';
 
 // Operators
-ADD:            '+';
-SUB:            '-';
-MUL:            '*';
-DIV:            '/';
-ASSIGN:         '=';
-GT:             '>';
-LT:             '<';
-EQUAL:          '==';
-NOTEQUAL:       '!=';
-AND:            '&&';
-OR:             '||';
+ADD:                    '+';
+SUB:                    '-';
+MUL:                    '*';
+DIV:                    '/';
+ASSIGN:                 '=';
+GT:                     '>';
+LT:                     '<';
+EQUAL:                  '==';
+NOTEQUAL:               '!=';
+AND:                    '&&';
+OR:                     '||';
 
-IDENTIFIER:     [A-Za-z][A-Za-z0-9_]*;
+IDENTIFIER:             [A-Za-z][A-Za-z0-9_]*;
 
 // Whitespace, comments
-WS:             [\r\n\t ]+     -> channel(HIDDEN);
-COMMENT:        '//' ~[\r\n]*  -> channel(HIDDEN);
+WS:                     [\r\n\t ]+      -> channel(HIDDEN);
+COMMENT:                '//' ~[\r\n]*   -> channel(HIDDEN);
+BLOCK_COMMENT:          '/*' .*? '*/'   -> skip;

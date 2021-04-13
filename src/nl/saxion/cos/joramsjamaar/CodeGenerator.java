@@ -109,6 +109,12 @@ public class CodeGenerator extends ParlementBaseVisitor<DataType>
         return null;
     }
 
+    @Override
+    public DataType visitExParentheses(ParlementParser.ExParenthesesContext ctx)
+    {
+        return visit(ctx.expression());
+    }
+
     /**
      * Assigns data to a variable
      * <p>
@@ -260,17 +266,17 @@ public class CodeGenerator extends ParlementBaseVisitor<DataType>
         int equalNumber = eqCounter++;
 
         jasminCode.add("");
-        jasminCode.add("; Not Equal comparison #" + equalNumber);
+        jasminCode.add("; Equal comparison #" + equalNumber);
 
         visit(ctx.left);
         visit(ctx.right);
 
-        jasminCode.add("if_icmpeq eq" + equalNumber + "IsNotTrue");     // If equal jump to eqXIsTrue
-        jasminCode.add("ldc 1");                                        // Not equal, so return 0
+        jasminCode.add("if_icmpeq eq" + equalNumber + "IsTrue");     // If equal jump to eqXIsTrue
+        jasminCode.add("ldc 0");                                        // Not equal, so return 0
         jasminCode.add("goto endeq" + equalNumber);                     // End the comparison
 
-        jasminCode.add("eq" + equalNumber + "IsNotTrue:");              // eqXIsTrue: If statement is true then we end here.
-        jasminCode.add("ldc 0");                                        // Equal so return 1
+        jasminCode.add("eq" + equalNumber + "IsTrue:");              // eqXIsTrue: If statement is true then we end here.
+        jasminCode.add("ldc 1");                                        // Equal so return 1
 
         jasminCode.add("endeq" + equalNumber + ":");                    // End comparison
 
@@ -317,14 +323,14 @@ public class CodeGenerator extends ParlementBaseVisitor<DataType>
         visit(ctx.left);
         visit(ctx.right);
 
-        jasminCode.add("if_icmplt lessThan" + equalNumber + "IsTrue");        // If equal jump to eqXIsTrue
-        jasminCode.add("ldc 0");                                                 // Not equal, so return 0
-        jasminCode.add("goto endLessThan" + equalNumber);                     // End the comparison
+        jasminCode.add("if_icmplt lessThan" + equalNumber + "IsTrue");              // If less than jump to lessThanXIsTrue
+        jasminCode.add("ldc 0");                                                    // greater than, so return 0
+        jasminCode.add("goto endLessThan" + equalNumber);                           // End the comparison
 
-        jasminCode.add("lessThan" + equalNumber + "IsTrue:");                 // eqXIsTrue: If statement is true then we end here.
-        jasminCode.add("ldc 1");                                                 // Equal so return 1
+        jasminCode.add("lessThan" + equalNumber + "IsTrue:");                       // lessThanXIsTrue: If statement is true then we end here.
+        jasminCode.add("ldc 1");                                                    // less than so return 1
 
-        jasminCode.add("endLessThan" + equalNumber + ":");                    // End comparison
+        jasminCode.add("endLessThan" + equalNumber + ":");                          // End comparison
 
         jasminCode.add("");
 
@@ -337,19 +343,19 @@ public class CodeGenerator extends ParlementBaseVisitor<DataType>
         int equalNumber = eqCounter++;
 
         jasminCode.add("");
-        jasminCode.add("; Equal comparison #" + equalNumber);
+        jasminCode.add("; Not Equal comparison #" + equalNumber);
 
         visit(ctx.left);
         visit(ctx.right);
 
-        jasminCode.add("if_icmpne eq" + equalNumber + "IsTrue");        // If equal jump to eqXIsTrue
-        jasminCode.add("ldc 1");                                        // Not equal, so return 0
-        jasminCode.add("goto endeq" + equalNumber);                     // End the comparison
+        jasminCode.add("if_icmpne notEq" + equalNumber + "IsTrue");         // If equal jump to eqXIsTrue
+        jasminCode.add("ldc 0");                                            // Equal, so return 0
+        jasminCode.add("goto endNotEq" + equalNumber);                      // End the comparison
 
-        jasminCode.add("eq" + equalNumber + "IsTrue:");                 // eqXIsTrue: If statement is true then we end here.
-        jasminCode.add("ldc 0");                                        // Equal so return 1
+        jasminCode.add("notEq" + equalNumber + "IsTrue:");                  // notEqXIsTrue: If statement is true then we end here.
+        jasminCode.add("ldc 1");                                            // Not equal so return 1
 
-        jasminCode.add("endeq" + equalNumber + ":");                    // End comparison
+        jasminCode.add("endNotEq" + equalNumber + ":");                     // End comparison
 
         jasminCode.add("");
 
@@ -406,20 +412,6 @@ public class CodeGenerator extends ParlementBaseVisitor<DataType>
     @Override
     public DataType visitFunction(ParlementParser.FunctionContext ctx)
     {
-        jasminCode.add(".method public static " + ctx.IDENTIFIER().getText() + "()V");
-
-        jasminCode.add(".limit stack 99");
-        jasminCode.add(".limit locals 99");  // NOTE: The args-parameter is a local too
-        jasminCode.add("");
-
-        for (ParlementParser.StatementContext s : ctx.statement())
-        {
-            visit(s);
-        }
-
-        jasminCode.add("return");
-        jasminCode.add(".end method");
-
         return null;
     }
 
