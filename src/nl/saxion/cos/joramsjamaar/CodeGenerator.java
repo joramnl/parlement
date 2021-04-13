@@ -1,5 +1,6 @@
 package nl.saxion.cos.joramsjamaar;
 
+import nl.saxion.cos.joramsjamaar.model.DataType;
 import nl.saxion.cos.joramsjamaar.model.Symbol;
 
 import java.util.HashMap;
@@ -225,7 +226,7 @@ public class CodeGenerator extends ParlementBaseVisitor<DataType>
         } else {
             jasminCode.add("ifeq else" + id);           // If expression evaluates to false then go to the else statement
             visit(ctx.ifTrue);                          // If true, visit the if block
-            jasminCode.add("goto endif" + id + ":");    // Expression evaluated to true and code has been executed. Don't execute else block by going to the end.
+            jasminCode.add("goto endif" + id);    // Expression evaluated to true and code has been executed. Don't execute else block by going to the end.
 
             jasminCode.add("else" + id + ":");          // Else statement
             visit(ctx.ifFalse);                         // Visit else block.
@@ -279,6 +280,58 @@ public class CodeGenerator extends ParlementBaseVisitor<DataType>
     }
 
     @Override
+    public DataType visitExGreaterThanOp(ParlementParser.ExGreaterThanOpContext ctx)
+    {
+
+        int equalNumber = eqCounter++;
+
+        jasminCode.add("");
+        jasminCode.add("; greaterThan comparison #" + equalNumber);
+
+        visit(ctx.left);
+        visit(ctx.right);
+
+        jasminCode.add("if_icmpgt greaterThan" + equalNumber + "IsTrue");        // If equal jump to eqXIsTrue
+        jasminCode.add("ldc 0");                                                 // Not equal, so return 0
+        jasminCode.add("goto endGreaterThan" + equalNumber);                     // End the comparison
+
+        jasminCode.add("greaterThan" + equalNumber + "IsTrue:");                 // eqXIsTrue: If statement is true then we end here.
+        jasminCode.add("ldc 1");                                                 // Equal so return 1
+
+        jasminCode.add("endGreaterThan" + equalNumber + ":");                    // End comparison
+
+        jasminCode.add("");
+
+        return DataType.BOOLEAN;
+    }
+
+    @Override
+    public DataType visitExLessThanOp(ParlementParser.ExLessThanOpContext ctx)
+    {
+
+        int equalNumber = eqCounter++;
+
+        jasminCode.add("");
+        jasminCode.add("; lessThan comparison #" + equalNumber);
+
+        visit(ctx.left);
+        visit(ctx.right);
+
+        jasminCode.add("if_icmplt lessThan" + equalNumber + "IsTrue");        // If equal jump to eqXIsTrue
+        jasminCode.add("ldc 0");                                                 // Not equal, so return 0
+        jasminCode.add("goto endLessThan" + equalNumber);                     // End the comparison
+
+        jasminCode.add("lessThan" + equalNumber + "IsTrue:");                 // eqXIsTrue: If statement is true then we end here.
+        jasminCode.add("ldc 1");                                                 // Equal so return 1
+
+        jasminCode.add("endLessThan" + equalNumber + ":");                    // End comparison
+
+        jasminCode.add("");
+
+        return DataType.BOOLEAN;
+    }
+
+    @Override
     public DataType visitExNotEqualOp(ParlementParser.ExNotEqualOpContext ctx)
     {
         int equalNumber = eqCounter++;
@@ -300,7 +353,7 @@ public class CodeGenerator extends ParlementBaseVisitor<DataType>
 
         jasminCode.add("");
 
-        return DataType.INT;
+        return DataType.BOOLEAN;
     }
 
     /**
@@ -353,6 +406,20 @@ public class CodeGenerator extends ParlementBaseVisitor<DataType>
     @Override
     public DataType visitFunction(ParlementParser.FunctionContext ctx)
     {
+        jasminCode.add(".method public static " + ctx.IDENTIFIER().getText() + "()V");
+
+        jasminCode.add(".limit stack 99");
+        jasminCode.add(".limit locals 99");  // NOTE: The args-parameter is a local too
+        jasminCode.add("");
+
+        for (ParlementParser.StatementContext s : ctx.statement())
+        {
+            visit(s);
+        }
+
+        jasminCode.add("return");
+        jasminCode.add(".end method");
+
         return null;
     }
 

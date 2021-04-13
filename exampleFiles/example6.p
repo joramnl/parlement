@@ -1,11 +1,10 @@
-//MARK RUTTE WIL JE DIT 5 KEER HERHALEN
-//    test("hallo!")
-//OKE STOP MAAR
+int counter = 0
 
-//MOTIE test ( string test )
-//    WILLIE WIL JE DIT OPLEZEN ALSJEBLIEFT test
-//OKE STOP MAAR
+string test = "Hallo"
 
-int a = 0
-a = 3 + 4 * 5
-string b = a
+MARK RUTTE WIL JE DIT 5 KEER HERHALEN
+    WILLIE WIL JE DIT OPLEZEN ALSJEBLIEFT counter + 1
+OKE STOP MAAR
+
+
+WILLIE WIL JE DIT OPLEZEN ALSJEBLIEFT test

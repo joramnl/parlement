@@ -1,13 +1,13 @@
 package nl.saxion.cos.joramsjamaar;
 
+import nl.saxion.cos.joramsjamaar.model.DataType;
+import nl.saxion.cos.joramsjamaar.model.Scope;
 import nl.saxion.cos.joramsjamaar.model.Symbol;
-
-import java.util.HashMap;
 
 public class Checker extends ParlementBaseVisitor<DataType>
 {
 
-    private HashMap<String, Symbol> symbols = new HashMap<>();
+    private Scope scope = new Scope();
 
     @Override
     public DataType visitDeclaration(ParlementParser.DeclarationContext ctx)
@@ -15,7 +15,7 @@ public class Checker extends ParlementBaseVisitor<DataType>
 
         String identifier = ctx.IDENTIFIER().getText();
 
-        if (symbols.get(identifier) != null)
+        if (scope.get(identifier) != null)
             throw new CompilerException(
                 String.format(
                     "Line %d:%d: Variable '%s' already declared",
@@ -69,16 +69,52 @@ public class Checker extends ParlementBaseVisitor<DataType>
             s.setUsed(true);
         }
 
-        symbols.put( identifier, s );
+        scope.add( identifier, s );
 
         return s.getType();
+    }
+
+    @Override
+    public DataType visitExGreaterThanOp(ParlementParser.ExGreaterThanOpContext ctx)
+    {
+        DataType left = visit(ctx.left);
+        DataType right = visit(ctx.right);
+
+        if (left != DataType.INT  || right != DataType.INT)
+            throw new CompilerException(
+                String.format(
+                    "Line %d:%d: DataTypes must be of type int to compare",
+                    ctx.getStart().getLine(),
+                    ctx.getStart().getCharPositionInLine()
+                )
+            );
+
+        return visit(ctx.left);
+    }
+
+    @Override
+    public DataType visitExLessThanOp(ParlementParser.ExLessThanOpContext ctx)
+    {
+        DataType left = visit(ctx.left);
+        DataType right = visit(ctx.right);
+
+        if (left != DataType.INT  || right != DataType.INT)
+            throw new CompilerException(
+                String.format(
+                    "Line %d:%d: DataTypes must be of type int to compare",
+                    ctx.getStart().getLine(),
+                    ctx.getStart().getCharPositionInLine()
+                )
+            );
+
+        return visit(ctx.left);
     }
 
     @Override
     public DataType visitExIdentifier(ParlementParser.ExIdentifierContext ctx)
     {
         String identifier = ctx.IDENTIFIER().getText();
-        Symbol s = symbols.get(identifier);
+        Symbol s = scope.get(identifier);
 
         if (s == null) {
             throw new CompilerException(
@@ -109,7 +145,7 @@ public class Checker extends ParlementBaseVisitor<DataType>
     public DataType visitAssigment(ParlementParser.AssigmentContext ctx)
     {
         String identifier = ctx.IDENTIFIER().getText();
-        Symbol s = symbols.get(identifier);
+        Symbol s = scope.get(identifier);
 
         if (s == null) {
             throw new CompilerException(
@@ -139,38 +175,10 @@ public class Checker extends ParlementBaseVisitor<DataType>
     }
 
     @Override
-    public DataType visitIdentifiers(ParlementParser.IdentifiersContext ctx)
-    {
-
-        for (ParlementParser.FunctionIdentifierContext f : ctx.functionIdentifier())
-        {
-            visit(f);
-        }
-
-        return super.visitIdentifiers(ctx);
-    }
-
-    @Override
-    public DataType visitFunctionIdentifier(ParlementParser.FunctionIdentifierContext ctx)
-    {
-//        ctx.T_BOOLEAN()
-
-        return super.visitFunctionIdentifier(ctx);
-    }
-
-    @Override
-    public DataType visitArguments(ParlementParser.ArgumentsContext ctx)
-    {
-        for (ParlementParser.ExpressionContext e : ctx.expression()) {
-            visit(e);
-        }
-
-        return null;
-    }
-
-    @Override
     public DataType visitLoop(ParlementParser.LoopContext ctx)
     {
+        this.scope = scope.newScope();
+
         if (visit(ctx.times) != DataType.INT)
             throw new CompilerException(
                 String.format(
@@ -179,6 +187,8 @@ public class Checker extends ParlementBaseVisitor<DataType>
                     ctx.times.getStart().getCharPositionInLine()
                 )
             );
+
+        this.scope = scope.getParentScope();
 
         return null;
     }
@@ -204,23 +214,15 @@ public class Checker extends ParlementBaseVisitor<DataType>
     @Override
     public DataType visitExDivOp(ParlementParser.ExDivOpContext ctx)
     {
-
         DataType left = visit(ctx.left);
         DataType right = visit(ctx.right);
 
-        if (left == DataType.STRING  || right == DataType.STRING)
+        if (left != DataType.INT  || right != DataType.INT)
             throw new CompilerException(
                 String.format(
-                    "Error on line %d: Types do not match",
-                    ctx.getStart().getLine()
-                )
-            );
-
-        if (!left.equals(right))
-            throw new CompilerException(
-                String.format(
-                    "Error on line %d: Cannot divide string",
-                    ctx.getStart().getLine()
+                    "Line %d:%d: DataTypes must be of type int to compare",
+                    ctx.getStart().getLine(),
+                    ctx.getStart().getCharPositionInLine()
                 )
             );
 
@@ -230,24 +232,16 @@ public class Checker extends ParlementBaseVisitor<DataType>
     @Override
     public DataType visitExMulOp(ParlementParser.ExMulOpContext ctx)
     {
-
         DataType left = visit(ctx.left);
         DataType right = visit(ctx.right);
 
-        if (left == DataType.STRING  || right == DataType.STRING)
+        if (left != DataType.INT  || right != DataType.INT)
             throw new CompilerException(
-                String.format(
-                    "Error on line %d: Types do not match",
-                    ctx.getStart().getLine()
-                )
-            );
-
-        if (!left.equals(right))
-            throw new CompilerException(
-                String.format(
-                    "Error on line %d: Cannot multiply string",
-                    ctx.getStart().getLine()
-                )
+                    String.format(
+                            "Line %d:%d: DataTypes must be of type int to compare",
+                            ctx.getStart().getLine(),
+                            ctx.getStart().getCharPositionInLine()
+                    )
             );
 
         return visit(ctx.left);
@@ -255,23 +249,17 @@ public class Checker extends ParlementBaseVisitor<DataType>
 
     @Override
     public DataType visitExSubOp(ParlementParser.ExSubOpContext ctx)
-    {DataType left = visit(ctx.left);
+    {
+        DataType left = visit(ctx.left);
         DataType right = visit(ctx.right);
 
-        if (left == DataType.STRING  || right == DataType.STRING)
+        if (left != DataType.INT  || right != DataType.INT)
             throw new CompilerException(
-                String.format(
-                    "Error on line %d: Types do not match",
-                    ctx.getStart().getLine()
-                )
-            );
-
-        if (!left.equals(right))
-            throw new CompilerException(
-                String.format(
-                    "Error on line %d: Cannot subtract string",
-                    ctx.getStart().getLine()
-                )
+                    String.format(
+                            "Line %d:%d: DataTypes must be of type int to compare",
+                            ctx.getStart().getLine(),
+                            ctx.getStart().getCharPositionInLine()
+                    )
             );
 
         return visit(ctx.left);
@@ -280,24 +268,16 @@ public class Checker extends ParlementBaseVisitor<DataType>
     @Override
     public DataType visitExAddOp(ParlementParser.ExAddOpContext ctx)
     {
-
         DataType left = visit(ctx.left);
         DataType right = visit(ctx.right);
 
-        if (left == DataType.STRING  || right == DataType.STRING)
+        if (left != DataType.INT  || right != DataType.INT)
             throw new CompilerException(
-                String.format(
-                    "Error on line %d: Types do not match",
-                    ctx.getStart().getLine()
-                )
-            );
-
-        if (!left.equals(right))
-            throw new CompilerException(
-                String.format(
-                    "Error on line %d: Cannot add string",
-                    ctx.getStart().getLine()
-                )
+                    String.format(
+                            "Line %d:%d: DataTypes must be of type int to compare",
+                            ctx.getStart().getLine(),
+                            ctx.getStart().getCharPositionInLine()
+                    )
             );
 
         return visit(ctx.left);

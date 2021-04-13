@@ -1,17 +1,36 @@
 package nl.saxion.cos.joramsjamaar.model;
 
-import nl.saxion.cos.joramsjamaar.DataType;
-
+/**
+ * Represents a variable
+ *
+ * A Symbol registers a name/identifier for a variable, the DataType and the local slot it is stored to
+ */
 public class Symbol
 {
+
+    /**
+     * Name/identifier of the variable
+     */
     private final String name;
 
+    /**
+     * DataType of the variable
+     */
     private final DataType type;
 
+    /**
+     * Slot the variable can be stored to and retrieved from
+     */
     private final int localSlot;
 
+    /**
+     * Stores the next available slot to be used
+     */
     private static int nextSlot = 1;
 
+    /**
+     * Indicates if a value is assigned after declaration
+     */
     private boolean used = false;
 
     public Symbol(String name, DataType type)
@@ -44,15 +63,5 @@ public class Symbol
     public void setUsed(boolean used)
     {
         this.used = used;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "Symbol{" +
-                "name='" + name + '\'' +
-                ", type=" + type +
-                ", localSlot=" + localSlot +
-                '}';
     }
 }

@@ -232,11 +232,6 @@ public class Compiler
                 return;
             }
             else {
-                for (String line:  jasminBytecode.getLines())
-                {
-                    System.out.println(line);
-                }
-
                 // Write Jasmin-code to a file
                 String jasminFilename = sourceCodePath.getParent().resolve(className + ".j").toString();
                 jasminBytecode.writeJasminToFile(jasminFilename);

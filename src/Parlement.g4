@@ -23,6 +23,8 @@ expression
     | left=expression SUB right=expression                  # ExSubOp           // Subtraction
     | left=expression EQUAL right=expression                # ExEqualOp
     | left=expression NOTEQUAL right=expression             # ExNotEqualOp
+    | left=expression GT right=expression                   # ExGreaterThanOp
+    | left=expression LT right=expression                   # ExLessThanOp
     | left=expression AND right=expression                  # ExAndOp
     | left=expression OR right=expression                   # ExOrOp
     | invokeFunction                                        # ExInvokeFunction

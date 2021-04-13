@@ -36,6 +36,13 @@ public interface ParlementVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExOrOp(ParlementParser.ExOrOpContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code ExGreaterThanOp}
+	 * labeled alternative in {@link ParlementParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExGreaterThanOp(ParlementParser.ExGreaterThanOpContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code ExIdentifier}
 	 * labeled alternative in {@link ParlementParser#expression}.
 	 * @param ctx the parse tree
@@ -77,6 +84,13 @@ public interface ParlementVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExBoolLiteral(ParlementParser.ExBoolLiteralContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ExLessThanOp}
+	 * labeled alternative in {@link ParlementParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExLessThanOp(ParlementParser.ExLessThanOpContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code ExIntLiteral}
 	 * labeled alternative in {@link ParlementParser#expression}.
