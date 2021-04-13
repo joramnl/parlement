@@ -6,5 +6,4 @@ MOTIE printStuff
     int counter = 0
 
     WILLIE WIL JE DIT OPLEZEN ALSJEBLIEFT counter + 1
-
 OKE STOP MAAR

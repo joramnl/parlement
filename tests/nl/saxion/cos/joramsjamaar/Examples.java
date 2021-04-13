@@ -165,11 +165,7 @@ class Examples
                 System.out.println(out);
 
             assertArrayEquals(new String[]{
-                    "1",
-                    "1",
-                    "1",
-                    "1",
-                    "1"
+                    "9",
             }, output.toArray());
         }
         else
